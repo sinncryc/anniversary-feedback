@@ -1,0 +1,377 @@
+/* Self-hosted fonts (no Google Fonts request at build or runtime). */
+@import "@fontsource-variable/inter/index.css";
+@import "@fontsource-variable/sora/index.css";
+@import "tailwindcss";
+
+@theme {
+  --color-ink-900: #04060d;
+  --color-ink-800: #070b17;
+  --color-ink-700: #0b1224;
+  --color-ink-600: #111a31;
+  --color-ink-500: #1b2745;
+
+  --color-gold-300: #ffe6a8;
+  --color-gold-400: #f3cf82;
+  --color-gold-500: #e0b45c;
+  --color-gold-600: #b98c39;
+
+  --color-azure-300: #8fd0ff;
+  --color-azure-400: #4aa8f0;
+  --color-azure-500: #1f78d1;
+
+  --font-display: "Sora Variable", "Segoe UI", system-ui, sans-serif;
+  --font-sans: "Inter Variable", system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+
+:root {
+  color-scheme: dark;
+}
+
+html,
+body {
+  padding: 0;
+  margin: 0;
+}
+
+body {
+  background: var(--color-ink-900);
+  color: #e9edf7;
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+/* ------------------------------------------------------------------ */
+/* Display: ambient background                                         */
+/* ------------------------------------------------------------------ */
+
+.stage-bg {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  background:
+    radial-gradient(120% 90% at 50% 0%, #16224a 0%, transparent 55%),
+    radial-gradient(90% 80% at 50% 110%, #1a1330 0%, transparent 60%),
+    linear-gradient(180deg, #05070f 0%, #070b17 50%, #04060d 100%);
+}
+
+.stage-bg::after {
+  content: "";
+  position: absolute;
+  inset: -20%;
+  background-image:
+    radial-gradient(circle at 20% 30%, rgba(224, 180, 92, 0.1), transparent 38%),
+    radial-gradient(circle at 82% 68%, rgba(74, 168, 240, 0.1), transparent 42%);
+  animation: aurora 26s ease-in-out infinite alternate;
+}
+
+@keyframes aurora {
+  0% {
+    transform: translate3d(-2%, -1%, 0) scale(1);
+  }
+  100% {
+    transform: translate3d(2%, 2%, 0) scale(1.08);
+  }
+}
+
+.stage-grid {
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(143, 208, 255, 0.045) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(143, 208, 255, 0.045) 1px, transparent 1px);
+  background-size: 72px 72px;
+  mask-image: radial-gradient(75% 65% at 50% 50%, #000 25%, transparent 78%);
+}
+
+.particle {
+  position: absolute;
+  border-radius: 9999px;
+  background: rgba(255, 230, 168, 0.55);
+  box-shadow: 0 0 12px 2px rgba(224, 180, 92, 0.35);
+  animation: drift linear infinite;
+  will-change: transform, opacity;
+}
+
+@keyframes drift {
+  0% {
+    transform: translate3d(0, 12vh, 0);
+    opacity: 0;
+  }
+  12% {
+    opacity: 0.75;
+  }
+  88% {
+    opacity: 0.6;
+  }
+  100% {
+    transform: translate3d(0, -112vh, 0);
+    opacity: 0;
+  }
+}
+
+/* ------------------------------------------------------------------ */
+/* Display: feedback river                                             */
+/* ------------------------------------------------------------------ */
+
+.river-lane {
+  position: absolute;
+  overflow: hidden;
+  pointer-events: none;
+  z-index: 20;
+}
+
+.river-item {
+  position: absolute;
+  will-change: transform;
+  animation-timing-function: linear;
+  animation-iteration-count: 1;
+  animation-fill-mode: both;
+}
+
+/* Each item fills the lane on its cross-axis and centres its card with
+   flexbox, so a two-line card can never poke outside the lane. */
+.river-item-h {
+  left: 0;
+  top: 0;
+  bottom: 0;
+  display: flex;
+  align-items: center;
+}
+
+.river-item-v {
+  top: 0;
+  left: 0;
+  right: 0;
+  display: flex;
+  justify-content: center;
+}
+
+/* horizontal: left -> right */
+@keyframes river-flow-right {
+  from {
+    transform: translate3d(calc(-100% - 32px), 0, 0);
+  }
+  to {
+    transform: translate3d(var(--travel), 0, 0);
+  }
+}
+
+/* horizontal: right -> left */
+@keyframes river-flow-left {
+  from {
+    transform: translate3d(var(--travel), 0, 0);
+  }
+  to {
+    transform: translate3d(calc(-100% - 32px), 0, 0);
+  }
+}
+
+/* vertical: top -> bottom */
+@keyframes river-flow-down {
+  from {
+    transform: translate3d(0, calc(-100% - 32px), 0);
+  }
+  to {
+    transform: translate3d(0, var(--travel), 0);
+  }
+}
+
+/* vertical: bottom -> top */
+@keyframes river-flow-up {
+  from {
+    transform: translate3d(0, var(--travel), 0);
+  }
+  to {
+    transform: translate3d(0, calc(-100% - 32px), 0);
+  }
+}
+
+/* The inner card owns opacity/scale/blur so it never fights the transform
+   animation running on .river-item. */
+.river-card {
+  animation-name: river-breathe;
+  animation-timing-function: ease-in-out;
+  animation-fill-mode: both;
+  will-change: opacity, filter, transform;
+  border-radius: 1.35rem;
+  border: 1px solid rgba(143, 208, 255, 0.18);
+  background: linear-gradient(
+    135deg,
+    rgba(20, 30, 58, 0.82) 0%,
+    rgba(11, 18, 36, 0.72) 100%
+  );
+  backdrop-filter: blur(6px);
+  box-shadow:
+    0 8px 26px rgba(0, 0, 0, 0.4),
+    inset 0 1px 0 rgba(255, 255, 255, 0.06);
+}
+
+.river-card-fresh {
+  border-color: rgba(243, 207, 130, 0.55);
+  box-shadow:
+    0 0 0 1px rgba(243, 207, 130, 0.25),
+    0 10px 34px rgba(224, 180, 92, 0.22),
+    inset 0 1px 0 rgba(255, 255, 255, 0.09);
+}
+
+@keyframes river-breathe {
+  0% {
+    opacity: 0;
+    filter: blur(7px);
+    transform: scale(0.9);
+  }
+  9% {
+    opacity: 1;
+    filter: blur(0);
+    transform: scale(1);
+  }
+  89% {
+    opacity: 1;
+    filter: blur(0);
+    transform: scale(1);
+  }
+  100% {
+    opacity: 0;
+    filter: blur(7px);
+    transform: scale(0.9);
+  }
+}
+
+/* Soft mask so cards dissolve into the corners instead of clipping hard. */
+.lane-mask-x {
+  mask-image: linear-gradient(90deg, transparent 0, #000 11%, #000 89%, transparent 100%);
+}
+
+.lane-mask-y {
+  mask-image: linear-gradient(180deg, transparent 0, #000 11%, #000 89%, transparent 100%);
+}
+
+/* ------------------------------------------------------------------ */
+/* Display: Top 3                                                      */
+/* ------------------------------------------------------------------ */
+
+.rank-card {
+  position: relative;
+  border-radius: 1.5rem;
+  border: 1px solid rgba(143, 208, 255, 0.14);
+  background: linear-gradient(
+    150deg,
+    rgba(17, 26, 49, 0.86) 0%,
+    rgba(7, 11, 23, 0.78) 100%
+  );
+  box-shadow:
+    0 24px 60px rgba(0, 0, 0, 0.45),
+    inset 0 1px 0 rgba(255, 255, 255, 0.05);
+  animation: rank-enter 700ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.rank-card-1 {
+  border-color: rgba(243, 207, 130, 0.42);
+  background: linear-gradient(
+    150deg,
+    rgba(46, 36, 18, 0.9) 0%,
+    rgba(12, 15, 28, 0.86) 62%
+  );
+  box-shadow:
+    0 0 0 1px rgba(243, 207, 130, 0.18),
+    0 30px 80px rgba(224, 180, 92, 0.16),
+    inset 0 1px 0 rgba(255, 255, 255, 0.08);
+}
+
+.rank-card-1::before {
+  content: "";
+  position: absolute;
+  inset: -1px;
+  border-radius: inherit;
+  padding: 1px;
+  background: linear-gradient(
+    120deg,
+    rgba(243, 207, 130, 0) 20%,
+    rgba(255, 230, 168, 0.85) 50%,
+    rgba(243, 207, 130, 0) 80%
+  );
+  background-size: 220% 100%;
+  -webkit-mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  animation: sheen 6s linear infinite;
+  pointer-events: none;
+}
+
+@keyframes sheen {
+  from {
+    background-position: 220% 0;
+  }
+  to {
+    background-position: -120% 0;
+  }
+}
+
+@keyframes rank-enter {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 26px, 0) scale(0.97);
+    filter: blur(8px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+    filter: blur(0);
+  }
+}
+
+.headline-glow {
+  text-shadow:
+    0 0 18px rgba(143, 208, 255, 0.25),
+    0 0 60px rgba(31, 120, 209, 0.2);
+}
+
+.gold-text {
+  background: linear-gradient(180deg, #ffe6a8 0%, #e0b45c 55%, #b98c39 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+@keyframes pulse-dot {
+  0%,
+  100% {
+    opacity: 1;
+    box-shadow: 0 0 0 0 rgba(74, 222, 128, 0.6);
+  }
+  50% {
+    opacity: 0.7;
+    box-shadow: 0 0 0 7px rgba(74, 222, 128, 0);
+  }
+}
+
+.live-dot {
+  animation: pulse-dot 2.2s ease-in-out infinite;
+}
+
+@keyframes fade-up {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 14px, 0);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.fade-up {
+  animation: fade-up 520ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .particle,
+  .stage-bg::after,
+  .rank-card-1::before,
+  .live-dot {
+    animation: none !important;
+  }
+}
