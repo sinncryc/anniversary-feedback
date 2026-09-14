@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import { eventConfig } from "@/lib/event-config";
+import { AI_PROMPT } from "@/lib/ai-prompt";
 import type { TopThreeItem } from "@/lib/types";
 import { validateAiResult } from "@/lib/validation";
 import EventLogos from "@/components/brand/event-logos";
@@ -13,27 +14,6 @@ type Stats = {
   demoMode: boolean;
   canPublish: boolean;
 };
-
-const AI_PROMPT = `Kamu adalah analis Employee Voice. Di bawah ini adalah JSON berisi seluruh feedback anonim karyawan pada acara ulang tahun perusahaan.
-
-Tugas:
-1. Kelompokkan seluruh feedback ke dalam tema-tema yang bermakna (bahasa Indonesia).
-2. Pilih 3 tema dengan jumlah feedback terbanyak.
-3. Untuk setiap tema, tulis judul singkat (maks 4 kata) dan satu kalimat ringkasan yang netral, konstruktif, dan layak ditampilkan di layar besar.
-
-Balas HANYA dengan JSON valid, tanpa penjelasan lain, dalam format persis ini:
-{
-  "top_3": [
-    { "rank": 1, "title": "...", "count": 0, "summary": "..." },
-    { "rank": 2, "title": "...", "count": 0, "summary": "..." },
-    { "rank": 3, "title": "...", "count": 0, "summary": "..." }
-  ]
-}
-
-Aturan: "count" = jumlah feedback pada tema tersebut. "title" maks 60 karakter. "summary" maks 220 karakter.
-
-Data feedback:
-`;
 
 export default function AdminDashboard() {
   const [checking, setChecking] = useState(true);

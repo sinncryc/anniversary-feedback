@@ -59,6 +59,21 @@ export function passwordMatches(candidate: unknown): boolean {
   return timingSafeEqual(candidate, expected);
 }
 
+/**
+ * Same shared-secret pattern as passwordMatches, but for the automatic
+ * summarize cron (src/app/api/cron/auto-summarize/route.ts). That route is
+ * hit by an external scheduler (cron-job.org / GitHub Actions), not a
+ * logged-in browser, so it can't use the admin session cookie — it proves
+ * itself with CRON_SECRET instead, sent as an Authorization: Bearer header
+ * or a ?secret= query param.
+ */
+export function cronSecretMatches(candidate: unknown): boolean {
+  const expected = process.env.CRON_SECRET?.trim();
+  if (!expected) return false;
+  if (typeof candidate !== "string" || candidate.length === 0) return false;
+  return timingSafeEqual(candidate, expected);
+}
+
 export async function createSessionToken(): Promise<string> {
   const expiresAt = Date.now() + SESSION_TTL_MS;
   const payload = String(expiresAt);
