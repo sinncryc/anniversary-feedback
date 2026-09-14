@@ -32,6 +32,12 @@ const COVER: CSSProperties = { objectFit: "cover" };
  * then flare in for ~1.7s and fade back out. That keeps the poster's own
  * "Knowledge in Motion" motif for the one moment it's actually about
  * something moving/updating, instead of cluttering the screen at all times.
+ *
+ * `.stage-horizon` is the one always-on piece taken directly from the real
+ * key visual (public/assets/final KV_1-03.jpg): its bottom edge — horizon
+ * glow, ring/hex marks, dot-grid corner texture — cropped and matted down
+ * to just the highlights (see globals.css), so the screen reads as the same
+ * artwork at a glance without importing the poster's full print brightness.
  */
 export default function StageBackground({
   pulsing = false,
@@ -83,6 +89,8 @@ export default function StageBackground({
           <Image src="/assets/tangan-kanan.png" alt="" fill sizes="30vw" style={COVER} />
         </div>
       </div>
+
+      <div className="stage-horizon" />
 
       <div className="constellation-field" />
       {particles.map((particle, index) => (

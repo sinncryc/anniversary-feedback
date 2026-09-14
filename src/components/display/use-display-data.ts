@@ -114,6 +114,19 @@ export function useDisplayData() {
         },
       )
       .on(
+        // Only INSERT bumps the counter locally above — a DELETE (the admin
+        // "Reset Semua Data" button wipes the whole table at once) had no
+        // listener at all, so the VOICES count only ever went back to 0 by
+        // accident, piggybacking on the ai_summary handler below also firing
+        // during a reset. Listening here directly means the total is always
+        // correct after a reset even if that coincidence stops holding.
+        "postgres_changes",
+        { event: "DELETE", schema: "public", table: "feedback" },
+        () => {
+          void fetchSnapshot(false);
+        },
+      )
+      .on(
         "postgres_changes",
         { event: "*", schema: "public", table: "ai_summary" },
         () => {

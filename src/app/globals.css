@@ -45,14 +45,19 @@ body {
 /* Display: ambient background                                         */
 /* ------------------------------------------------------------------ */
 
+/* Color stops sampled directly from the real ASTRA KM FEST 2026 key visual
+   (public/assets/final KV_1-03.jpg — its field reads roughly rgb(1,94,172)
+   to rgb(40,110,180)) and pulled several stops darker so the display keeps
+   its near-black legibility for text and glass cards while the hue itself
+   now genuinely matches the poster instead of a generic neutral navy. */
 .stage-bg {
   position: absolute;
   inset: 0;
   overflow: hidden;
   background:
-    radial-gradient(120% 90% at 50% 0%, #163863 0%, transparent 55%),
-    radial-gradient(90% 80% at 50% 110%, #0d2a4a 0%, transparent 60%),
-    linear-gradient(180deg, #05080f 0%, #070d1c 50%, #04060d 100%);
+    radial-gradient(120% 90% at 50% 0%, #1c4f8f 0%, transparent 55%),
+    radial-gradient(90% 80% at 50% 110%, #0f3a6b 0%, transparent 60%),
+    linear-gradient(180deg, #050b1e 0%, #081633 50%, #03050f 100%);
 }
 
 .stage-bg::after {
@@ -63,6 +68,28 @@ body {
     radial-gradient(circle at 20% 30%, rgba(74, 168, 240, 0.14), transparent 40%),
     radial-gradient(circle at 82% 68%, rgba(143, 208, 255, 0.12), transparent 42%);
   animation: aurora 26s ease-in-out infinite alternate;
+}
+
+/* Lifted straight from the bottom edge of the real key visual — the
+   compass's own horizon glow, ring/hex marks and dot-grid corner texture —
+   with the flat poster-blue field matted out to transparent (only the
+   highlights kept), so pasting it in just adds real light, not another
+   opaque blue rectangle. Sits fixed at the foot of the screen, screen-
+   blended and dim, so the whole scene visibly matches the finished poster
+   without brightening the display back up to print-poster levels. */
+.stage-horizon {
+  position: absolute;
+  inset-inline: 0;
+  bottom: 0;
+  width: 100%;
+  aspect-ratio: 2400 / 283;
+  background-image: url("/assets/kv-horizon.png");
+  background-size: cover;
+  background-position: center bottom;
+  background-repeat: no-repeat;
+  mix-blend-mode: screen;
+  opacity: 0.85;
+  pointer-events: none;
 }
 
 /* ------------------------------------------------------------------ */
@@ -433,28 +460,38 @@ body {
 }
 
 /* A newly-arrived card gets its own quick-spinning ring (recycled cards stay
-   calm) — motion doubles as the "this one's new" signal, not just flourish. */
+   calm) — motion doubles as the "this one's new" signal, not just flourish.
+   Same fiber-in-the-ring treatment as .rank-card::after, just quicker —
+   this is the newest, most "alive" moment on screen. */
 .river-card-fresh::after {
   content: "";
   position: absolute;
   inset: 0;
   border-radius: inherit;
   padding: 1.25px;
-  background: conic-gradient(
-    from var(--border-angle),
-    transparent 0deg,
-    rgba(255, 230, 168, 0.9) 60deg,
-    transparent 150deg,
-    transparent 210deg,
-    rgba(143, 208, 255, 0.5) 300deg,
-    transparent 360deg
-  );
+  background:
+    conic-gradient(
+      from var(--border-angle),
+      transparent 0deg,
+      rgba(255, 230, 168, 0.9) 60deg,
+      transparent 150deg,
+      transparent 210deg,
+      rgba(143, 208, 255, 0.5) 300deg,
+      transparent 360deg
+    ),
+    url("/assets/optic-fiber.png");
+  background-size: auto, 320% 320%;
+  background-repeat: no-repeat, no-repeat;
+  background-position: center, 0% 0%;
+  background-blend-mode: screen;
   -webkit-mask:
     linear-gradient(#000 0 0) content-box,
     linear-gradient(#000 0 0);
   -webkit-mask-composite: xor;
   mask-composite: exclude;
-  animation: border-spin 3.2s linear infinite;
+  animation:
+    border-spin 3.2s linear infinite,
+    fiber-drift 5s linear infinite;
   pointer-events: none;
 }
 
@@ -524,28 +561,42 @@ body {
 
 /* The moving border itself: a conic gradient ring, masked down to just the
    1.5px edge, rotating on its own custom property. Present on all three
-   cards so "border bergerak" reads as one system, not a one-off flourish. */
+   cards so "border bergerak" reads as one system, not a one-off flourish.
+   A second background layer — the optic-fiber art, screen-blended under
+   the gradient — rides in the same ring so the "Knowledge in Motion" fiber
+   motif lives right in the moving border instead of being a separate
+   sticker. Its own position drifts on `fiber-drift` while `border-angle`
+   keeps spinning the color sweep; the gradient's position is pinned to
+   `center` in that keyframe so the two motions never fight each other. */
 .rank-card::after {
   content: "";
   position: absolute;
   inset: 0;
   border-radius: inherit;
   padding: 1.5px;
-  background: conic-gradient(
-    from var(--border-angle),
-    transparent 0deg,
-    rgba(143, 208, 255, 0.85) 55deg,
-    transparent 130deg,
-    transparent 230deg,
-    rgba(143, 208, 255, 0.45) 300deg,
-    transparent 360deg
-  );
+  background:
+    conic-gradient(
+      from var(--border-angle),
+      transparent 0deg,
+      rgba(143, 208, 255, 0.85) 55deg,
+      transparent 130deg,
+      transparent 230deg,
+      rgba(143, 208, 255, 0.45) 300deg,
+      transparent 360deg
+    ),
+    url("/assets/optic-fiber.png");
+  background-size: auto, 320% 320%;
+  background-repeat: no-repeat, no-repeat;
+  background-position: center, 0% 0%;
+  background-blend-mode: screen;
   -webkit-mask:
     linear-gradient(#000 0 0) content-box,
     linear-gradient(#000 0 0);
   -webkit-mask-composite: xor;
   mask-composite: exclude;
-  animation: border-spin 7s linear infinite;
+  animation:
+    border-spin 7s linear infinite,
+    fiber-drift 11s linear infinite;
   pointer-events: none;
   z-index: 1;
 }
@@ -564,18 +615,25 @@ body {
 }
 
 /* Champion gets a brighter, faster ring that weaves gold through the
-   azure — the one card the room's eyes settle on. */
+   azure — the one card the room's eyes settle on. Re-declares the same
+   fiber layer as .rank-card::after (this rule's own `background` shorthand
+   replaces the whole image list) so the champion keeps the fiber texture
+   too; background-size/position/blend-mode still cascade in from the base
+   rule above since this block doesn't touch them. A single duration value
+   speeds up both the color sweep and the fiber drift together. */
 .rank-card-1::after {
-  background: conic-gradient(
-    from var(--border-angle),
-    transparent 0deg,
-    rgba(255, 230, 168, 0.95) 45deg,
-    rgba(224, 180, 92, 0.5) 90deg,
-    transparent 150deg,
-    transparent 210deg,
-    rgba(143, 208, 255, 0.55) 280deg,
-    transparent 340deg
-  );
+  background:
+    conic-gradient(
+      from var(--border-angle),
+      transparent 0deg,
+      rgba(255, 230, 168, 0.95) 45deg,
+      rgba(224, 180, 92, 0.5) 90deg,
+      transparent 150deg,
+      transparent 210deg,
+      rgba(143, 208, 255, 0.55) 280deg,
+      transparent 340deg
+    ),
+    url("/assets/optic-fiber.png");
   animation-duration: 4.5s;
 }
 
@@ -610,6 +668,19 @@ body {
 @keyframes border-spin {
   to {
     --border-angle: 360deg;
+  }
+}
+
+/* Drifts only the optic-fiber background layer of a ring (see
+   .rank-card::after) — the gradient layer's position is repeated as the
+   unchanging keyword `center` in both frames so it never moves, only the
+   fiber texture glides underneath the spinning color sweep. */
+@keyframes fiber-drift {
+  from {
+    background-position: center, 0% 0%;
+  }
+  to {
+    background-position: center, 100% 100%;
   }
 }
 
