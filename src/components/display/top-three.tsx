@@ -59,7 +59,7 @@ export default function TopThree({
 
       <h1
         key={`sub-${version}`}
-        className="headline-glow gold-text mt-[0.55vh] font-display text-[clamp(1.9rem,3.4vw,4rem)] font-extrabold leading-[1.06] tracking-tight"
+        className="headline-glow text-white mt-[0.55vh] font-display text-[clamp(1.9rem,3.4vw,4rem)] font-extrabold leading-[1.06] tracking-tight"
       >
         {eventConfig.displaySubHeadline}
       </h1>

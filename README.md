@@ -203,7 +203,34 @@ Default branding ada di `src/lib/event-config.ts`.
 
 ---
 
-## 9. Struktur project
+## 9. Desain — “Knowledge in Motion”
+
+Nama konsep desain aplikasi ini diambil langsung dari subjudul poster **ASTRA
+KM FEST 2026**. Elemen visualnya:
+
+- **Bidang navy gelap** (`--color-ink-*`) sebagai langit malam poster, dengan
+  glow biru (`--color-azure-*`) alih-alih ungu di gradient ambient.
+- **Konstelasi/jaring** (`.constellation-field` di `globals.css`) — pola titik
+  bergaris tipis yang melayang pelan di belakang setiap layar, menggemakan
+  motif jaringan/"sayap" pada poster.
+- **Satu aksen emas per layar** untuk momen aksi utama (tombol kirim feedback,
+  tombol publish Top 3, bingkai QR) — di poster, emas juga dipakai sangat
+  hemat, hanya untuk baris "Commitment Fee". Di luar itu, judul dan teks utama
+  putih tegas seperti pada poster, bukan emas.
+- **Feedback river yang sudah ada** (partikel + kartu yang mengalir mengelilingi
+  layar `/display`) secara harfiah adalah wujud "Knowledge in Motion" —
+  masukan karyawan yang terus bergerak secara live.
+- **Logo Astra + Satu Indonesia** (`src/components/brand/event-logos.tsx`)
+  ditampilkan berdampingan di header setiap halaman publik, masing-masing di
+  atas chip putih karena kedua file sumber punya latar putih.
+
+Nama & tagline event ada di `src/lib/event-config.ts` (`eventConfig.name`,
+`eventConfig.tagline`), termasuk konstanta `designConcept` untuk nama konsep
+di atas.
+
+---
+
+## 10. Struktur project
 
 ```
 src/
@@ -233,7 +260,7 @@ supabase/schema.sql              tabel, RLS, realtime
 
 ---
 
-## 10. Catatan operasional
+## 11. Catatan operasional
 
 - **Latihan dulu.** Buka `/display` + `/participant` + `/admin` bersamaan sehari
   sebelum acara, dan lakukan satu siklus export → AI → import penuh sambil

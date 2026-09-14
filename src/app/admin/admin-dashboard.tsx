@@ -4,6 +4,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { eventConfig } from "@/lib/event-config";
 import type { TopThreeItem } from "@/lib/types";
 import { validateAiResult } from "@/lib/validation";
+import EventLogos from "@/components/brand/event-logos";
 
 type Stats = {
   totalResponses: number;
@@ -122,6 +123,7 @@ function LoginScreen({
         onSubmit={submit}
         className="w-full max-w-sm rounded-2xl border border-ink-500 bg-ink-800/80 p-7"
       >
+        <EventLogos size="sm" className="mb-5" />
         <p className="text-[0.65rem] font-semibold tracking-[0.28em] text-azure-300/70">
           {eventConfig.organization}
         </p>
@@ -175,6 +177,9 @@ function Dashboard({ onLogout }: { onLogout: () => void }) {
   const [parseError, setParseError] = useState<string | null>(null);
   const [publishState, setPublishState] = useState<
     { kind: "idle" } | { kind: "busy" } | { kind: "ok"; at: string } | { kind: "error"; message: string }
+  >({ kind: "idle" });
+  const [resetState, setResetState] = useState<
+    { kind: "idle" } | { kind: "busy" } | { kind: "ok" } | { kind: "error"; message: string }
   >({ kind: "idle" });
   const [copied, setCopied] = useState(false);
   const fileInput = useRef<HTMLInputElement>(null);
@@ -271,6 +276,31 @@ function Dashboard({ onLogout }: { onLogout: () => void }) {
   async function logout() {
     await fetch("/api/admin/logout", { method: "POST" });
     onLogout();
+  }
+
+  async function resetAll() {
+    const confirmed = window.confirm(
+      "Yakin hapus SEMUA feedback dan Top 3 yang sedang tayang di layar? Tindakan ini tidak bisa dibatalkan.",
+    );
+    if (!confirmed) return;
+
+    setResetState({ kind: "busy" });
+    try {
+      const response = await fetch("/api/admin/reset", { method: "POST" });
+      const payload = await response.json().catch(() => null);
+      if (!response.ok) {
+        setResetState({ kind: "error", message: payload?.error ?? "Gagal mereset data." });
+        return;
+      }
+      setResetState({ kind: "ok" });
+      setRaw("");
+      setPreview(null);
+      setParseError(null);
+      setPublishState({ kind: "idle" });
+      void loadStats();
+    } catch {
+      setResetState({ kind: "error", message: "Koneksi bermasalah." });
+    }
   }
 
   return (
@@ -489,6 +519,39 @@ function Dashboard({ onLogout }: { onLogout: () => void }) {
           </div>
         ) : null}
       </Panel>
+
+      {/* Danger zone — clears trial-and-error data between test runs, or
+          right before the real event so the audience screen starts empty. */}
+      <section className="mt-5 rounded-2xl border border-red-500/25 bg-red-500/[0.04] p-5 sm:p-6">
+        <h2 className="flex items-center gap-3 font-display text-sm font-bold text-red-300">
+          <span className="flex h-6 w-6 items-center justify-center rounded-full bg-red-500/15 text-[0.65rem] font-bold text-red-300">
+            !
+          </span>
+          Reset data
+        </h2>
+        <p className="mt-3 text-xs leading-relaxed text-slate-400">
+          Menghapus semua feedback yang masuk dan Top 3 yang sedang tayang.
+          Pakai ini di antara sesi uji coba, atau tepat sebelum acara mulai
+          supaya layar dan hitungan mulai dari nol.{" "}
+          <strong className="text-red-300">Tidak bisa dibatalkan.</strong>
+        </p>
+        <button
+          type="button"
+          onClick={resetAll}
+          disabled={resetState.kind === "busy"}
+          className="mt-4 rounded-xl border border-red-500/40 bg-red-500/10 px-4 py-2.5 text-xs font-bold text-red-300 transition hover:bg-red-500/20 disabled:cursor-not-allowed disabled:opacity-50"
+        >
+          {resetState.kind === "busy" ? "Menghapus…" : "Reset Semua Data"}
+        </button>
+        {resetState.kind === "ok" ? (
+          <p className="mt-3 text-xs text-emerald-300">
+            Semua data berhasil dihapus.
+          </p>
+        ) : null}
+        {resetState.kind === "error" ? (
+          <p className="mt-3 text-xs text-red-300">{resetState.message}</p>
+        ) : null}
+      </section>
     </Shell>
   );
 }

@@ -6,6 +6,7 @@ import {
   FEEDBACK_MIN_LENGTH,
   eventConfig,
 } from "@/lib/event-config";
+import EventLogos from "@/components/brand/event-logos";
 
 type Status = "idle" | "submitting" | "success";
 
@@ -62,10 +63,11 @@ export default function ParticipantForm() {
 
       <div className="relative mx-auto flex w-full max-w-md flex-1 flex-col">
         <header className="fade-up">
+          <EventLogos size="sm" className="mb-5" />
           <p className="text-[0.68rem] font-semibold tracking-[0.28em] text-azure-300/70">
             {eventConfig.organization}
           </p>
-          <p className="mt-1 font-display text-sm font-semibold tracking-[0.16em] text-gold-400">
+          <p className="mt-1 font-display text-sm font-semibold tracking-[0.16em] text-azure-300">
             {eventConfig.name}
           </p>
         </header>
@@ -194,7 +196,7 @@ function SuccessScreen() {
           Selamat menikmati acara.
         </p>
 
-        <p className="mt-8 font-display text-xs font-semibold tracking-[0.24em] text-gold-500/80">
+        <p className="mt-8 font-display text-xs font-semibold tracking-[0.24em] text-azure-300/80">
           {eventConfig.name}
         </p>
       </div>

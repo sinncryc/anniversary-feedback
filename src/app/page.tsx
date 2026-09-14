@@ -1,5 +1,6 @@
 import Link from "next/link";
-import { eventConfig } from "@/lib/event-config";
+import { designConcept, eventConfig } from "@/lib/event-config";
+import EventLogos from "@/components/brand/event-logos";
 
 const ROUTES = [
   {
@@ -26,15 +27,21 @@ const ROUTES = [
 
 export default function Home() {
   return (
-    <main className="flex min-h-dvh items-center justify-center bg-ink-900 px-6 py-16">
-      <div className="w-full max-w-2xl">
+    <main className="relative flex min-h-dvh items-center justify-center overflow-hidden bg-ink-900 px-6 py-16">
+      <div aria-hidden className="stage-bg">
+        <div className="constellation-field" />
+      </div>
+
+      <div className="relative w-full max-w-2xl">
+        <EventLogos className="mb-8" />
+
         <p className="text-[0.65rem] font-semibold tracking-[0.3em] text-azure-300/70">
           {eventConfig.organization}
         </p>
-        <h1 className="mt-2 font-display text-3xl font-extrabold text-white">
-          Anniversary Feedback
+        <h1 className="headline-glow mt-2 font-display text-3xl font-extrabold text-white sm:text-4xl">
+          {eventConfig.name}
         </h1>
-        <p className="mt-2 text-sm text-slate-500">
+        <p className="mt-2 font-display text-sm italic text-azure-300/80">
           {eventConfig.tagline}
         </p>
 
@@ -57,6 +64,10 @@ export default function Home() {
             </Link>
           ))}
         </div>
+
+        <p className="mt-10 text-center text-[0.65rem] tracking-[0.2em] text-slate-600">
+          Design concept — {designConcept}
+        </p>
       </div>
     </main>
   );

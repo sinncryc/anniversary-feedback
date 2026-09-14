@@ -187,6 +187,44 @@ export async function setTop3(items: TopThreeItem[]): Promise<string> {
   return updatedAt;
 }
 
+/**
+ * Wipes ALL feedback and the published Top 3. For clearing trial-and-error
+ * data between test runs — or right before the real event so the audience
+ * screen starts from zero — not for routine use. Destructive and
+ * irreversible; the calling route requires admin auth and the dashboard
+ * button confirms first.
+ */
+export async function resetAllData(): Promise<void> {
+  if (usingDemoStore()) {
+    const store = demo();
+    store.feedback = [];
+    store.nextId = 1;
+    store.top3 = [];
+    store.top3UpdatedAt = null;
+    return;
+  }
+
+  if (!hasServiceRole()) {
+    throw new Error(
+      "SUPABASE_SERVICE_ROLE_KEY belum di-set di server, jadi reset tidak bisa dilakukan.",
+    );
+  }
+
+  const admin = getAdminClient();
+
+  const { error: feedbackError } = await admin
+    .from("feedback")
+    .delete()
+    .not("id", "is", null);
+  if (feedbackError) throw new Error(feedbackError.message);
+
+  const { error: summaryError } = await admin
+    .from("ai_summary")
+    .delete()
+    .not("rank", "is", null);
+  if (summaryError) throw new Error(summaryError.message);
+}
+
 export async function getDisplayState(): Promise<DisplayState> {
   const [rows, top3, total] = await Promise.all([
     listFeedback({ limit: RIVER_SEED_LIMIT, onlyVisible: true }),

@@ -4,6 +4,7 @@ import { useMemo } from "react";
 import { QRCodeSVG } from "qrcode.react";
 import { eventConfig } from "@/lib/event-config";
 import { useIsClient } from "@/lib/use-is-client";
+import EventLogos from "@/components/brand/event-logos";
 
 export default function QrBoard() {
   const isClient = useIsClient();
@@ -25,14 +26,19 @@ export default function QrBoard() {
       />
 
       <div className="relative flex flex-col items-center text-center">
+        <EventLogos className="mb-6 w-full max-w-xs" />
+
         <p className="text-[0.7rem] font-semibold tracking-[0.34em] text-azure-300/70">
           {eventConfig.organization}
         </p>
-        <p className="mt-2 font-display text-sm font-bold tracking-[0.2em] text-gold-400">
+        <p className="mt-2 font-display text-sm font-bold tracking-[0.2em] text-azure-300">
           {eventConfig.name}
         </p>
+        <p className="mt-1 font-display text-xs italic text-slate-400">
+          {eventConfig.tagline}
+        </p>
 
-        <h1 className="headline-glow gold-text mt-8 font-display text-[clamp(2rem,5vw,4.5rem)] font-extrabold leading-tight tracking-tight">
+        <h1 className="headline-glow mt-8 font-display text-[clamp(2rem,5vw,4.5rem)] font-extrabold leading-tight tracking-tight text-white">
           SCAN &amp; SHARE YOUR VOICE
         </h1>
 

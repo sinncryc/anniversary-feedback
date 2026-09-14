@@ -1,10 +1,12 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
+import EventLogos from "@/components/brand/event-logos";
 import FeedbackRiver from "@/components/display/feedback-river";
 import StageBackground from "@/components/display/stage-background";
 import TopThree from "@/components/display/top-three";
 import { useDisplayData } from "@/components/display/use-display-data";
+import { usePublishPulse } from "@/components/display/use-publish-pulse";
 import { eventConfig } from "@/lib/event-config";
 
 export default function DisplayStage() {
@@ -19,6 +21,10 @@ export default function DisplayStage() {
     demoMode,
     ready,
   } = useDisplayData();
+
+  // Drives the poster-asset flare in StageBackground — same "just
+  // published" moment TopThree pulses on, derived the same way.
+  const pulsing = usePublishPulse(top3UpdatedAt ?? "initial");
 
   const [controlsVisible, setControlsVisible] = useState(true);
 
@@ -45,7 +51,12 @@ export default function DisplayStage() {
 
   return (
     <main className="relative h-dvh w-screen overflow-hidden bg-ink-900">
-      <StageBackground />
+      <StageBackground pulsing={pulsing} />
+
+      {/* Mirrors the poster's own top bar — Astra left, Satu Indonesia right. */}
+      <div className="pointer-events-none absolute inset-x-[1.6vw] top-[1.6vh] z-30">
+        <EventLogos size="sm" />
+      </div>
 
       <FeedbackRiver pool={pool} pending={pending} onConsume={consumePending} />
 
@@ -56,7 +67,7 @@ export default function DisplayStage() {
         <div className="mt-[3vh] flex items-center gap-[1.6vw] text-[clamp(0.6rem,0.72vw,0.85rem)] font-semibold tracking-[0.26em] text-slate-500">
           <span>{eventConfig.organization}</span>
           <span aria-hidden className="h-3 w-px bg-slate-700" />
-          <span className="text-gold-500/80">{eventConfig.name}</span>
+          <span className="text-azure-300/80">{eventConfig.name}</span>
           <span aria-hidden className="h-3 w-px bg-slate-700" />
           <span>
             {ready ? total.toLocaleString("id-ID") : "—"}{" "}

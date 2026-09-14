@@ -6,9 +6,9 @@ export const eventConfig = {
   /** Small eyebrow line above the main title on the display. */
   organization: process.env.NEXT_PUBLIC_EVENT_ORG ?? "ASTRA INTERNATIONAL",
   /** Main event name. */
-  name: process.env.NEXT_PUBLIC_EVENT_NAME ?? "ASTRA LEARN FEST",
+  name: process.env.NEXT_PUBLIC_EVENT_NAME ?? "ASTRA KM FEST 2026",
   /** Short subtitle / anniversary line. */
-  tagline: process.env.NEXT_PUBLIC_EVENT_TAGLINE ?? "KNOWLEDGE MANAGEMENT FEST 2026",
+  tagline: process.env.NEXT_PUBLIC_EVENT_TAGLINE ?? "Knowledge in Motion",
   /** The one question every participant answers. */
   question:
     process.env.NEXT_PUBLIC_EVENT_QUESTION ??
@@ -17,6 +17,17 @@ export const eventConfig = {
   displayHeadline: "WHAT OUR PEOPLE ARE SAYING",
   displaySubHeadline: "TOP 3 SARAN TERBAIK",
 } as const;
+
+/**
+ * Name of the visual/UX design language this app is built on, borrowed
+ * straight from the ASTRA KM FEST 2026 poster's own subtitle. Executed here
+ * as: a deep-space navy field, a slow constellation drifting behind every
+ * screen (the poster's network motif), and a single gold accent per screen
+ * marking the one action that matters (submit, publish, scan) — everything
+ * else stays quiet so that accent, and the live feedback river itself, reads
+ * as literal "knowledge in motion".
+ */
+export const designConcept = "Knowledge in Motion" as const;
 
 export const FEEDBACK_MIN_LENGTH = 10;
 export const FEEDBACK_MAX_LENGTH = 500;

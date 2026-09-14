@@ -19,7 +19,11 @@ const ONE_YEAR = 60 * 60 * 24 * 365;
  * script hammering the endpoint.
  */
 const IP_WINDOW_MS = 60_000;
-const IP_MAX_PER_WINDOW = 60;
+// Raised for events with hundreds of phones sharing one venue-WiFi NAT'd IP
+// (e.g. everyone scanning at once right after the MC's cue) — the real
+// one-per-person rule is still the httpOnly cookie above, this only stops a
+// script hammering the endpoint.
+const IP_MAX_PER_WINDOW = 1000;
 const ipHits = new Map<string, number[]>();
 
 function ipFlooding(ip: string): boolean {
